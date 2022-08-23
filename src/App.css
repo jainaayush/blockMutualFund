@@ -1,0 +1,120 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+.App{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-header, .Invest-text {
+  height: calc(100vh - 135px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #fff;
+  position: relative;
+}
+.footercopy{
+  background-color: #464646;
+  color: #fff;  
+  padding: 6px 12px;
+  text-align: center;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}
+
+
+.light {
+  background-color: #fff;
+}
+ .dark {
+   background-color: #947944;
+ }
+.App-link {
+  color: #61dafb;
+}
+
+.Invest-text .ant-btn{
+  min-width: 185px;
+  border-radius: 20px;
+  height: auto;
+  font-size: 20px;
+  
+}
+.header-part {
+  background-color: #a69064;
+  display: flex;
+  padding: 9px 20px;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+}
+.logomain img{
+  width: 120px;
+  height: auto;
+}
+.tabledata{
+  width: 90%;
+  margin: 0 auto;
+  padding: 0px 15px;
+}
+
+.tabledata table{
+  border: solid 1px #f0f0f0;
+}
+.tabledata table thead tr th{
+  background-color: #664e1e;
+  color: #fff;
+}
+.dark .tabledata table thead tr th{
+  background-color: #4c4c4c;
+  color: #fff;
+}
+.investbtn {
+  font-size: 26px !important;
+  padding: 10px 30px !important;
+  border-radius: 40px !important;
+  margin-top: 10px
+}
+.ant-modal.modal_main{
+  max-width: 80%;
+  width: 100% !important;
+  text-align: center;
+}
+.modal_main .tabledata{
+  width: 100%;
+  padding: 0;
+}
+.ant-modal-title{
+  font-size: 18px;
+}
+.modal_data_title{
+  font-size: 16px;
+  color: rgba(0,0,0,.85);
+  font-weight: 500;
+  text-align: left;
+}
+.custm-btn.ant-btn{
+  border-radius: 20px;
+  padding: 5px 32px;
+  min-width: auto;
+  font-size: 15px;
+  background: #1890ff;
+  border-color: #1890ff;
+  color: #fff;
+}
+
+.walletCard {
+  color: black;
+}
