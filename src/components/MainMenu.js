@@ -59,7 +59,7 @@ export const MainMenu = () => {
       key: 'description',
     },
     {
-      title: 'Ammount Invested',
+      title: 'Amount Invested',
       dataIndex: 'amountInvested',
       key: 'amountInvested',
     },
@@ -143,6 +143,7 @@ export const MainMenu = () => {
       {!backButton && 
       <div>
       <Button type="primary" className="investbtn" onClick={handleInvestButton}>Invest</Button>
+      {/* <WalletCard /> */}
       </div>
       }
       {backButton ? showLoader() ? <Spin /> : 
