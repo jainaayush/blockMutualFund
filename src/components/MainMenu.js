@@ -28,7 +28,7 @@ export const MainMenu = () => {
       key: 'name',
       render: (text) => {
         return (
-          <span onClick={() =>{
+          <span className = "fund-name" onClick={() =>{
             if(text === "The Twenty Fund"){
               setModalData({data:topTwenty,title:text})
             }else if(text === "Top Two") {

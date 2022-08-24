@@ -118,3 +118,7 @@
 .walletCard {
   color: black;
 }
+
+.fund-name {
+  cursor: pointer;
+}
