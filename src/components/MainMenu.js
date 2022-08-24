@@ -81,7 +81,7 @@ export const MainMenu = () => {
       render: () => {
         return (
           <Button key="back"  className="custm-btn">
-            withdraw
+            Withdraw
           </Button>
         )
       },
