@@ -122,3 +122,6 @@
 .fund-name {
   cursor: pointer;
 }
+table tbody.ant-table-tbody tr{
+  cursor: pointer;
+}

@@ -26,22 +26,6 @@ export const MainMenu = () => {
       title: 'Fund Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => {
-        return (
-          <span className = "fund-name" onClick={() =>{
-            if(text === "The Twenty Fund"){
-              setModalData({data:topTwenty,title:text})
-            }else if(text === "Top Two") {
-              setModalData({data:topTwo,title:text})
-            }else {
-              setModalData({data:highRisk,title:text})
-            }
-            handleModal()}
-          }> 
-            {text}
-          </span>
-        )
-      },
     },
     {
       title: 'Ticker',
@@ -131,6 +115,16 @@ export const MainMenu = () => {
     else return false
   }
 
+  const handleRowClick = (row) => {
+    if(row.name === "The Twenty Fund"){
+      setModalData({data:topTwenty,title:row.name})
+    }else if(row.name === "Top Two") {
+      setModalData({data:topTwo,title:row.name})
+    }else {
+      setModalData({data:highRisk,title:row.name})
+    }
+    handleModal()
+  }
   return (
     <div className="Invest-text">
       {modalVisible && 
@@ -148,7 +142,14 @@ export const MainMenu = () => {
       }
       {backButton ? showLoader() ? <Spin /> : 
         <div className="tabledata">
-          <Table columns={columns} dataSource={columnData} />
+          <Table  
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: () => {handleRowClick(record)}, // click row
+              };
+             }} 
+             columns={columns} 
+             dataSource={columnData} />
           <Button type="primary" onClick={handleBackButton}>Back</Button>
         </div>
         :<></>
