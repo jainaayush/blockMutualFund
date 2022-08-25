@@ -125,3 +125,10 @@
 table tbody.ant-table-tbody tr{
   cursor: pointer;
 }
+
+.error-message{
+  color:#ef6969;
+  font-size:13px;
+  top:5px;
+  position:relative;
+}

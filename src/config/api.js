@@ -14,3 +14,8 @@ export const getCoinsDetailsByID = async (modalData) => {
   )
   return result
 }
+
+export const getOneETHValue = async () => {
+  const result= await axios.get(`https://testtaskmutualfund.herokuapp.com/coins/${1027}`)
+  return Object.values(result.data.data)[0]
+}

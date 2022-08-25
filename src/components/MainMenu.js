@@ -1,17 +1,20 @@
 import { useState } from 'react'
 import { Button,Table,Spin } from 'antd';
 
-import { getAllCoinsData } from '../config/api'
+import { getAllCoinsData,getOneETHValue } from '../config/api'
 
 import { DetailsModal } from './DetailsModal'
 // import { WalletCard } from '../components/WalletCard'
+import { ConfirmationModal} from '../components/ConfirmationModal'
+import { getAmount } from '../utils/getAmont'
+import { getWalletBalance }  from '../utils/walletConnection'
 
 import '../App.css';
 
-const columnData = [
-  {name:"The Twenty Fund",ticker:"CT20",price:"$1000",description:"Top 20 cryptocurrencies",amountInvested:"$1000",currentValue:"$1100",change:"10%",risk:"Low"},
-  {name:"Top Two",ticker:"TOP2",price:"$800",description:"Top 2 coins",amountInvested:"$500",currentValue:"$600",change:"20%",risk:"Medium"},
-  {name:"High Risk Alts",ticker:"AH10",price:"$500",description:" 10 Lowermarketcap coin",amountInvested:"$2000",currentValue:"$1800",change:"-10%",risk:"high"}
+const columnsData = [
+  {name:"The Twenty Fund",ticker:"CT20",price:"$1000",description:"Top 20 cryptocurrencies",amountInvested:"$0",currentValue:"$1100",change:"10%",risk:"Low"},
+  {name:"Top Two",ticker:"TOP2",price:"$800",description:"Top 2 coins",amountInvested:"$0",currentValue:"$600",change:"20%",risk:"Medium"},
+  {name:"High Risk Alts",ticker:"AH10",price:"$500",description:" 10 Lowermarketcap coin",amountInvested:"$0",currentValue:"$1800",change:"-10%",risk:"high"}
 ]
 export const MainMenu = () => {
   const [backButton, showBackButton] = useState(false)
@@ -19,7 +22,13 @@ export const MainMenu = () => {
   const [topTwo, setTopTwo] = useState([])
   const [highRisk, setHighRisk] = useState([])
   const [modalVisible,setModalVisible] = useState(false)
+  const [confirmationModalVisible,setConfirmationVisible] = useState(false)
+  const [columnData,setColumnData] = useState(columnsData)
+  const [selectedFund, setSelectedFund] = useState()
   const [modalData,setModalData] = useState([])
+  const [isLoading,setIsLoading] = useState(false)
+  const [modalType,setModalType] = useState()
+  const [errorMessage, setErrorMessage] = useState()
 
   const columns = [
     {
@@ -64,11 +73,17 @@ export const MainMenu = () => {
     },
     {
       title: 'Invest',
-      dataIndex: 'invest',
+      dataIndex: 'name',
       key: 'invest',
-      render: () => {
+      render: (name) => {
         return (
-          <Button key="back" className="custm-btn">
+          <Button key="back" className="custm-btn" onClick={(event) => {
+            event.stopPropagation()
+            setErrorMessage("")
+            setModalType("Invest")
+            setSelectedFund(name)
+            setConfirmationVisible(true)
+          }}>
             Invest
           </Button>
         )
@@ -76,17 +91,22 @@ export const MainMenu = () => {
     },
     {
       title: 'Withdraw',
-      dataIndex: 'withdraw',
+      dataIndex: 'name',
       key: 'withdraw',
-      render: () => {
+      render: (name) => {
         return (
-          <Button key="back"  className="custm-btn">
+          <Button key="back"  className="custm-btn" onClick={(event) => {
+            event.stopPropagation()
+            setErrorMessage("")
+            setModalType("Withdraw")
+            setSelectedFund(name)
+            setConfirmationVisible(true)
+          }}>
             Withdraw
           </Button>
         )
       },
     }
-    
   ]
 
   const handleInvestButton = async () => {
@@ -105,10 +125,6 @@ export const MainMenu = () => {
     showBackButton(!backButton)
   }
 
-  const handleModalVisible = () => {
-    setModalVisible(false)
-  }
-
   const showLoader = () => {
     if(highRisk.length === 0 || topTwenty.length === 0 || topTwo.length === 0 )
     return true
@@ -125,15 +141,63 @@ export const MainMenu = () => {
     }
     handleModal()
   }
+
+  const handleInvest = async (value) => {
+    const walletBalance = await getWalletBalance()
+    if(walletBalance === undefined)
+      setErrorMessage("")
+    if(typeof(value) === "number" && modalType === "Invest") {
+      if(walletBalance >= value) {
+        setIsLoading(true)
+        setConfirmationVisible(false)
+        const oneEthValue = await getOneETHValue()
+        const totalAmount = (oneEthValue.quote.USD.price) * value 
+        columnData.forEach(item => {
+          if(item.name === selectedFund){
+            item.amountInvested = `$${(getAmount(item.amountInvested) + totalAmount).toFixed(2)}`
+          }
+        })
+        setColumnData(columnData)
+        setIsLoading(false)
+      } 
+      
+      if(walletBalance < value) {
+        setErrorMessage("Not enough balance in your wallet")
+      }
+    } else {
+      setIsLoading(true) 
+      setConfirmationVisible(false)
+      setTimeout(() => {
+        columnData.forEach(item => {
+          if(item.name === selectedFund){
+            item.amountInvested = '$0'
+          }
+        })
+        setColumnData(columnData)
+        setIsLoading(false)
+      },500)
+    }
+  }
   return (
     <div className="Invest-text">
       {modalVisible && 
         <DetailsModal 
           isVisible={true} 
-          handleModalVisible={handleModalVisible}
+          setModalVisible={setModalVisible}
           modalData={modalData}
+          coinsTableData={columnData}
         />
       }
+      {confirmationModalVisible && 
+        <ConfirmationModal 
+          modalType={modalType}
+          isVisible={true} 
+          handleInvest={handleInvest}
+          setConfirmationVisible={setConfirmationVisible}
+          errorMessage={errorMessage}
+      />
+      }
+      
       {!backButton && 
       <div>
       <Button type="primary" className="investbtn" onClick={handleInvestButton}>Invest</Button>
@@ -141,15 +205,17 @@ export const MainMenu = () => {
       </div>
       }
       {backButton ? showLoader() ? <Spin /> : 
+      isLoading ? <Spin /> : 
         <div className="tabledata">
           <Table  
-            onRow={(record, rowIndex) => {
+            onRow={(record) => {
               return {
                 onClick: () => {handleRowClick(record)}, // click row
               };
              }} 
              columns={columns} 
-             dataSource={columnData} />
+             dataSource={columnData} 
+            />
           <Button type="primary" onClick={handleBackButton}>Back</Button>
         </div>
         :<></>

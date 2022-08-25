@@ -20,14 +20,9 @@ export const columns = [
     },
   },
   {
-    title: 'Ammount Invested',
+    title: 'Amount Invested',
     dataIndex: 'amountInvested',
     key: 'amountInvested',
-    render: () => {
-      return (
-      <p>$1000</p>
-      )
-    },
   },
   {
     title: '% changed',
