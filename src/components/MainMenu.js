@@ -8,13 +8,12 @@ import { DetailsModal } from './DetailsModal'
 import { ConfirmationModal} from '../components/ConfirmationModal'
 import { getAmount } from '../utils/getAmont'
 import { getWalletBalance }  from '../utils/walletConnection'
-
 import '../App.css';
 
 const columnsData = [
-  {name:"The Twenty Fund",ticker:"CT20",price:"$1000",description:"Top 20 cryptocurrencies",amountInvested:"$0",currentValue:"$1100",change:"10%",risk:"Low"},
-  {name:"Top Two",ticker:"TOP2",price:"$800",description:"Top 2 coins",amountInvested:"$0",currentValue:"$600",change:"20%",risk:"Medium"},
-  {name:"High Risk Alts",ticker:"AH10",price:"$500",description:" 10 Lowermarketcap coin",amountInvested:"$0",currentValue:"$1800",change:"-10%",risk:"high"}
+  {name:"The Twenty Fund",ticker:"CT20",price:"$1000",description:"Top 20 cryptocurrencies",amountInvested:"$0",currentValue:"$1100",change:"0%",risk:"Low"},
+  {name:"Top Two",ticker:"TOP2",price:"$800",description:"Top 2 coins",amountInvested:"$0",currentValue:"$600",change:"0%",risk:"Medium"},
+  {name:"High Risk Alts",ticker:"AH10",price:"$500",description:" 10 Lowermarketcap coin",amountInvested:"$0",currentValue:"$1800",change:"0%",risk:"high"}
 ]
 export const MainMenu = () => {
   const [backButton, showBackButton] = useState(false)
@@ -29,7 +28,7 @@ export const MainMenu = () => {
   const [isLoading,setIsLoading] = useState(false)
   const [modalType,setModalType] = useState()
   const [errorMessage, setErrorMessage] = useState()
-
+  
   const columns = [
     {
       title: 'Fund Name',
@@ -60,11 +59,17 @@ export const MainMenu = () => {
       title: 'Current Value',
       dataIndex: 'currentValue',
       key: 'currentValue',
+      render: (currentValue,allData) => {
+        return (
+          <p style={{"marginTop":"15px"}}>${(getAmount(allData.price))*(getAmount(allData.amountInvested))}</p>
+        )
+
+      }
     },
     {
       title: '% change',
       dataIndex: 'change',
-      key: 'symbol',
+      key: 'change',
     },
     {
       title: 'Risk',
@@ -142,6 +147,18 @@ export const MainMenu = () => {
     handleModal()
   }
 
+  const calculatePercentage = (props) => {
+    const prevAmt = getAmount(props.prev)
+    if(prevAmt === 0)
+      return `${props.new.toFixed(2)}%`
+    else {
+      const latest = prevAmt+props.new
+      const diff = latest-prevAmt
+      const percentage = ((diff-prevAmt).toFixed(2))/100
+      return `${percentage.toFixed(2)}%`
+    }
+  }
+
   const handleInvest = async (value) => {
     const walletBalance = await getWalletBalance()
     if(walletBalance === undefined)
@@ -154,6 +171,7 @@ export const MainMenu = () => {
         const totalAmount = (oneEthValue.quote.USD.price) * value 
         columnData.forEach(item => {
           if(item.name === selectedFund){
+            item.change =  calculatePercentage({prev:item.amountInvested,new:totalAmount})
             item.amountInvested = `$${(getAmount(item.amountInvested) + totalAmount).toFixed(2)}`
           }
         })
@@ -178,6 +196,7 @@ export const MainMenu = () => {
       },500)
     }
   }
+
   return (
     <div className="Invest-text">
       {modalVisible && 
