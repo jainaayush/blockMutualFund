@@ -189,6 +189,7 @@ export const MainMenu = () => {
         columnData.forEach(item => {
           if(item.name === selectedFund){
             item.amountInvested = '$0'
+            item.change = '0%'
           }
         })
         setColumnData(columnData)
