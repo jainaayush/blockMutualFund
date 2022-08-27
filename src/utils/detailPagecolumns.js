@@ -28,10 +28,5 @@ export const columns = [
     title: '% changed',
     dataIndex: 'changed',
     key: 'changed',
-    render: () => {
-      return (
-      <p>7%</p>
-      )
-    },
   }
 ]

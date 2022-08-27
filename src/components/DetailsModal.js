@@ -19,6 +19,8 @@ export const DetailsModal = ({isVisible,setModalVisible,modalData,coinsTableData
     const amount = getAmount(parentData.amountInvested)
     
     result.forEach(item => {
+      item.all=item
+      item.changed =  parentData.change
       if (amount === 0)
         item.amountInvested = "$0"
       else
